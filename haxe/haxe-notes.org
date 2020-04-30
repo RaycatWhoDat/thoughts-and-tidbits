@@ -64,7 +64,7 @@ If you're "tuning up" a `hxcpp`-targeting project, there are a few things you ca
 4) Avoid optional arguments when the argument is a basic type. Default arguments are fine but could also be a hindrance in performance-critical code.
 
 *** Haxe/JS
-`clemos/haxe-js-kit` is borked at the moment, use `hxnodelibs` instead. (Kinda borked, too - but less so.)
+`clemos/haxe-js-kit` is borked at the moment, use [[https://github.com/HaxeFoundation/hxnodelibs][hxnodelibs]] instead. (Kinda borked, too - but less so.)
 
 Using `socket.io` isn't exactly the best. Try using `ws` on the server and vanilla WebSockets on the browser.
 
