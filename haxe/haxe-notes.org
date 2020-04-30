@@ -1,0 +1,83 @@
+#+TITLE: Haxe Notes
+#+AUTHOR: Ray M. Perry (RaycatWhoDat)
+
+*** Haxe
+Make sure all your Haxe libs are locked to a version. Don’t forget to include the lib in your `build.hxml`.
+
+`-dce full` tends to rip out things you want. Be careful with it. Use `@:keep` when necessary.
+
+If you have a `Dynamic` you're trying to 'access', stuff it into a `DynamicAccess<T>`.
+
+Metadata is actually ridiculous. Use it. You can denote compile-time metadata with `@:` and run-time metadata with `@`.
+
+haxe.ds.Either requires you to return either Left(T) or Right(T) with the appropriate type. `Void` doesn't work here. If you need something like Either<T, Void>, use Null<T> instead.
+
+If you're trying to do pattern matching on a `Dynamic`, try to define a type for it and box it in a variable. That will allow you to do proper field-matching on it.
+
+If you need to call a class method programmatically, you'll need to use Reflect or Type. Reflect got me there but I'm unsure of the nuances versus Type.
+
+An `import.hx` file found at the root of your application will allow you to import types and classes that all modules require.
+
+Haxelib doesn't like it when you try overwriting a git-versioned via `haxelib install`. Make sure you clean up before trying to reinstall something. Otherwise, use `haxelib update`.
+
+Operating with files is a little bit weird. For high-level manipulation, you want `getContent` and `saveContent`. For low-level manipulation, you want `read` and `write` which will return a `FileInput` and `FileOutput` respectively. Once you have one of those, you can use them with certain operations.
+
+`-D no-deprecation-warnings` is a thing.
+
+Partial application exists (`.bind`).
+
+Enums are more powerful but they act different because they're (G)ADTs. Beware the nuances.
+EDIT: Enum abstracts seem to do what you'd expect normal enums to do.
+
+Haxe doesn't give you the name of the enum when stringifying unless you explicitly ask it to.
+
+If you need to get the name of a EnumValue, you need to `using haxe.EnumTools` and use `getName()` on the enum instance.
+
+You can use extractors to perform small transformations while pattern-matching (=>).
+
+There is a specific boot order that Haxe has. After doing whatever it needs to do to bootstrap itself, it calls `Boot.__init__()`, then calls a static method called `__init__` in each class. If you have things you want to do before your class starts up, you can put them in that method.
+
+You can use Haxe to supplant artifacts/bundled code post app creation.
+
+For string with a length of 1, `.code` will return the character code.
+
+Use `--run` for scripts that you want to run with Haxe.
+
+*** Haxe/Macro
+Macros are the best way to do things at compile-time but, my God, they do your head in for a while.
+
+If you decide to use macros, they are - by far - the most advanced feature in Haxe. If you ever feel lost, just remember these three things:
+1) A macro is a syntax transformation. Both your input and output should consist of haxe.macro.Exprs.
+2) Go dumb. Don't get cheeky with the compiler. Pretend you're building a string literal. Matter of fact, you can build out a string literal instead. However, we prefer to talk in Exprs.
+3) Output to JS to see how the macro is compiled.
+
+You don't have to use a `macro function` when using `--macro`. You can call any static function like a macro from the command-line.
+
+When using macros to inline a string for another macro, you have to handle the entire process (including your final state) in the same macro. Straight macro-in-macro won't work but you can use a macro to generate a macro call (as of 4.0.5).
+
+*** Haxe/C++
+Let's say, you've already profiled your problem with [[https://hxscout.com][hxScout]] and you need to pull out some more performance.
+If you're "tuning up" a `hxcpp`-targeting project, there are a few things you can do:
+1) You can replace structures with classes. You can do this the traditional way or you can use `@:structInit class` to get 85% of the way there.
+2) Use `@:generic` to annotate type parameters. Type parameter performance degrades when compiling down. So, if there's a situation where you have `class ClassWithTypeParam<T>` or `function funcWithTypeParam<T>`, put a `@:generic` in front of it.
+3) Avoid Reflection and `Dynamic`. Static target performance suffers greatly.
+4) Avoid optional arguments when the argument is a basic type. Default arguments are fine but could also be a hindrance in performance-critical code.
+
+*** Haxe/JS
+`clemos/haxe-js-kit` is borked at the moment, use `hxnodelibs` instead. (Kinda borked, too - but less so.)
+
+Using `socket.io` isn't exactly the best. Try using `ws` on the server and vanilla WebSockets on the browser.
+
+`Express.Static` is going to body you until you realize that you need to use `Node.__dirname`.
+
+Some notes about `react`:
+1) Only base React and ReactDOM is included in `haxe-react`. You need to create externs for the rest of the libraries (assuming there isn’t a package for them already).
+2) If you use the CDN to pull React in, use the `UMD version` and specify `-D react_global`.
+
+If you need to add some code to the top-level of the class, you can also use `Compiler.includeFile`.
+
+*** Tink
+`tink_cli` provides a Prompt. It expects a PromptType which is an enum on `tink.cli.Prompt`. It then takes a handler callback from the `tink.Future`.
+
+*** Coconut
+Coming Soon™.
