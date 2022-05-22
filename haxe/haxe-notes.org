@@ -76,6 +76,8 @@ Some notes about `react`:
 
 If you need to add some code to the top-level of the class, you can also use `Compiler.includeFile`.
 
+If you're wondering how to make Haxe work in a modern JavaScript workflow, treat it like a drop-in replacement for TypeScript. You'll want to have a separate `-cmd` option in your `.hxml` file that calls your bundler of choice with your JS files.
+
 *** Tink
 `tink_cli` provides a Prompt. It expects a PromptType which is an enum on `tink.cli.Prompt`. It then takes a handler callback from the `tink.Future`.
 
